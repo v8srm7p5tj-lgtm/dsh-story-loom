@@ -289,6 +289,7 @@ function ReaderTopBar(props) {
         h('span', null, '连续性'),
         h('span', { className: 'sl-lint-count' }, props.lint ? (props.lint.counts.error || props.lint.counts.warn || props.lint.counts.info) : '—')
       ),
+      h('button', { type: 'button', className: 'sl-icon-btn', title: '同步到另一台设备', onClick: props.onSync }, h(Icon, { name: 'sync', size: 16 })),
       h('button', { type: 'button', className: 'sl-icon-btn', title: '使用说明', onClick: props.onHelp }, h(Icon, { name: 'help', size: 16 }))
     )
   )
@@ -618,6 +619,9 @@ function ReaderApp() {
   var helpOpenState = useState(false)
   var helpOpen = helpOpenState[0]
   var setHelpOpen = helpOpenState[1]
+  var syncOpenState = useState(false)
+  var syncOpen = syncOpenState[0]
+  var setSyncOpen = syncOpenState[1]
   var projectMenuState = useState(false)
   var projectMenuOpen = projectMenuState[0]
   var setProjectMenuOpen = projectMenuState[1]
@@ -845,6 +849,15 @@ function ReaderApp() {
     }
   }
 
+  function handleImported(result) {
+    if (!result || !result.state) return
+    var id = result.state.project.id
+    projectIdRef.current = id
+    setProjectId(id)
+    if (boot && result.index) setBoot(Object.assign({}, boot, { index: result.index }))
+    applyLoaded({ state: result.state }, false)
+  }
+
   var board = state ? boardOf(state, selectedBoardId) : null
   var allEntries = state && board ? entriesOf(state, board.id) : []
   var filteredEntries = allEntries
@@ -893,6 +906,7 @@ function ReaderApp() {
       onSearch: function () { setSearchOpen(true) },
       onRefresh: manualRefresh,
       onLint: function () { setLintOpen(true) },
+      onSync: function () { setSyncOpen(true) },
       onHelp: function () { setHelpOpen(true) },
       onToggleNav: function () { setNavOpen(!navOpen) },
       lint: lint,
@@ -988,6 +1002,14 @@ function ReaderApp() {
       onOpen: openEntry
     }) : null,
     helpOpen ? h(ReaderHelp, { onClose: function () { setHelpOpen(false) } }) : null,
+    syncOpen ? h(SyncModal, {
+      project: state.project,
+      projectId: projectId,
+      revision: revision,
+      onClose: function () { setSyncOpen(false) },
+      onImported: handleImported,
+      onToast: showToast
+    }) : null,
     h(Toast, { toast: toast })
   )
 }

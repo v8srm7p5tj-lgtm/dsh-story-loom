@@ -79,6 +79,17 @@ var api = {
       body: JSON.stringify({ revision: revision })
     })
   },
+  exportBundle: async function (id) {
+    const response = await fetch(API_BASE + '/projects/' + encodeURIComponent(id) + '/export-bundle', { credentials: 'same-origin' })
+    if (!response.ok) throw new ApiError('导出同步包失败：HTTP ' + response.status, response.status, null)
+    return response.json()
+  },
+  importBundle: function (bundle) {
+    return apiRequest('/sync/import', {
+      method: 'POST',
+      body: JSON.stringify({ bundle: bundle })
+    })
+  },
   exportUrl: function (id) {
     return API_BASE + '/projects/' + encodeURIComponent(id) + '/export'
   },

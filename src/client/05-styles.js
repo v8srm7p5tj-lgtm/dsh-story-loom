@@ -768,4 +768,12 @@ body[data-ds-dark-theme] .sl-input,body[data-ds-dark-theme] .sl-select,body[data
   .sl-reader-detail{width:388px}
 }
 
+.sl-sync-card{display:flex;align-items:flex-start;gap:10px;padding:11px 12px;border:1px solid var(--sl-line);border-radius:9px;background:rgba(126,110,88,.03);margin-bottom:8px}
+.sl-sync-icon{width:34px;height:34px;border-radius:9px;border:1px solid var(--sl-accent-line);background:var(--sl-accent-soft);color:var(--sl-accent);display:flex;align-items:center;justify-content:center;flex:none}
+.sl-sync-card b{display:block;font-size:11.5px;font-weight:600;margin-bottom:2px}
+.sl-sync-card p{margin:0;font-size:10px;color:var(--sl-muted);line-height:1.6;max-width:330px}
+.sl-sync-card .sl-btn{flex:none;margin-left:auto;align-self:center}
+.sl-sync-pending{display:flex;align-items:center;gap:6px;margin-top:8px;padding:7px 9px;border:1px dashed var(--sl-accent-line);border-radius:7px;background:var(--sl-accent-soft);font-size:10px;color:var(--sl-muted);flex-wrap:wrap}
+.sl-sync-pending .sl-btn{margin-left:auto}
+
 `

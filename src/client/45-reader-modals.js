@@ -203,3 +203,107 @@ function LintModal(props) {
         )
   )
 }
+
+function SyncModal(props) {
+  var busyState = useState('')
+  var busy = busyState[0]
+  var setBusy = busyState[1]
+  var pendingState = useState(null)
+  var pending = pendingState[0]
+  var setPending = pendingState[1]
+  var fileRef = useRef(null)
+
+  async function doExport() {
+    if (busy) return
+    setBusy('export')
+    try {
+      var bundle = await api.exportBundle(props.projectId)
+      var name = ((props.project && props.project.title) || 'story').replace(/[\\/:*?"<>|]/g, '-')
+      downloadText(name + '.storyloom.json', JSON.stringify(bundle, null, 2), 'application/json')
+      props.onToast({ kind: 'ok', text: '同步包已导出。请通过私密渠道传到另一台设备。' })
+    } catch (err) {
+      props.onToast({ kind: 'error', text: '导出失败：' + (err && err.message ? err.message : '未知错误') })
+    } finally {
+      setBusy('')
+    }
+  }
+
+  function chooseFile(file) {
+    if (!file) return
+    var reader = new FileReader()
+    reader.onload = function () {
+      try {
+        var bundle = JSON.parse(String(reader.result || '{}'))
+        if (!bundle || bundle.format !== 'dsh-story-loom/sync') {
+          props.onToast({ kind: 'error', text: '这不是织世同步包。' })
+          return
+        }
+        setPending({ bundle: bundle, name: file.name, size: file.size })
+      } catch (err) {
+        props.onToast({ kind: 'error', text: '同步包不是合法 JSON。' })
+      }
+    }
+    reader.onerror = function () { props.onToast({ kind: 'error', text: '读取文件失败。' }) }
+    reader.readAsText(file)
+  }
+
+  async function doImport() {
+    if (!pending || busy) return
+    setBusy('import')
+    try {
+      var result = await api.importBundle(pending.bundle)
+      props.onImported(result)
+      props.onClose()
+      props.onToast({ kind: 'ok', text: '同步完成：' + result.state.project.title })
+    } catch (err) {
+      props.onToast({ kind: 'error', text: '导入失败：' + (err && err.message ? err.message : '未知错误') })
+      setBusy('')
+    }
+  }
+
+  return h(
+    Modal,
+    {
+      title: '同步到另一台设备',
+      subtitle: '不经过服务器：导出当前世界，传到另一台设备，再导入。',
+      width: 'narrow',
+      onClose: props.onClose,
+      footer: [h('div', { key: 'space', className: 'sl-spacer' }), h('button', { key: 'close', type: 'button', className: 'sl-btn', onClick: props.onClose }, '关闭')]
+    },
+    h(
+      'div',
+      null,
+      h('div', { className: 'sl-settings-note', style: { marginBottom: 12 } }, '当前世界：' + ((props.project && props.project.title) || '未命名') + ' · 修订 ' + (props.revision == null ? '?' : props.revision)),
+      h(
+        'div',
+        { className: 'sl-sync-card' },
+        h('div', { className: 'sl-sync-icon' }, h(Icon, { name: 'download', size: 18 })),
+        h('div', { style: { flex: 1, minWidth: 0 } }, h('b', null, '导出同步包'), h('p', null, '包含当前世界的全部档案、地图/图片和文风指南，生成一个 .storyloom.json 文件。')),
+        h('button', { type: 'button', className: 'sl-btn primary', onClick: doExport, disabled: !!busy }, busy === 'export' ? '导出中…' : '导出')
+      ),
+      h(
+        'div',
+        { className: 'sl-sync-card' },
+        h('div', { className: 'sl-sync-icon' }, h(Icon, { name: 'upload', size: 18 })),
+        h('div', { style: { flex: 1, minWidth: 0 } }, h('b', null, '导入同步包'), h('p', null, '选择另一台设备导出的文件。同名项目会被覆盖，本机会先备份当前版本。')),
+        h(
+          'button',
+          { type: 'button', className: 'sl-btn', onClick: function () { fileRef.current && fileRef.current.click() }, disabled: !!busy },
+          pending ? '重新选择' : '选择文件'
+        ),
+        h('input', {
+          ref: fileRef,
+          type: 'file',
+          accept: '.json,.storyloom,application/json',
+          style: { display: 'none' },
+          onChange: function (event) { chooseFile(event.target.files && event.target.files[0]); event.target.value = '' }
+        })
+      ),
+      pending
+        ? h('div', { className: 'sl-sync-pending' }, h(Icon, { name: 'archive', size: 13 }), h('span', null, pending.name + ' · ' + Math.round(pending.size / 1024) + ' KB'), h('button', { type: 'button', className: 'sl-btn small primary', onClick: doImport, disabled: !!busy }, busy === 'import' ? '导入中…' : '导入这个包'))
+        : null,
+      h('div', { className: 'sl-settings-note', style: { marginTop: 12 } }, '同步包是明文，包含完整作品数据。请用 AirDrop、U 盘或你自己的私有云传输，不要发到公开群/仓库。'),
+      busy ? h('div', { className: 'sl-faint', style: { fontSize: 10, marginTop: 8 } }, busy === 'export' ? '正在打包图片…' : '正在写入并备份…') : null
+    )
+  )
+}

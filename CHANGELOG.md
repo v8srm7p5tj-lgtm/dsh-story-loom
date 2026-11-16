@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.0 — 2026-11-16
+
+- 新增跨设备同步：导出/导入 `.storyloom.json`，包含当前世界、地图/图片、文风指南。
+- 同步包不经过服务器，用户自己用 AirDrop/U 盘/私有云传输。
+- 同名项目导入前自动备份；新项目直接加入 index。
+- 新增 `storyctl sync export/import`。
+
 ## 0.1.1 — 2026-11-16
 
 - 修复 Host 数据目录：从 DSH workspaceRegistry 解析工作区，不再依赖 Host 进程 cwd。

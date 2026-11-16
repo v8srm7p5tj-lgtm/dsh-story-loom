@@ -520,6 +520,7 @@ function svgPath(name) {
     route: ['M6 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M18 16a2 2 0 1 0 0 4 2 2 0 0 0 0-4z', 'M8 6h5a4 4 0 0 1 0 8H9a4 4 0 0 0 0 8h7'],
     wand: ['M4 20L16 8', 'M14 4l2 2', 'M18 8l2 2', 'M5 5l1 3 3 1-3 1-1 3-1-3-3-1 3-1z'],
     archive: ['M3 5h18v4H3z', 'M5 9v11h14V9', 'M9 13h6'],
+    sync: ['M20 11a8 8 0 0 0-14.9-4M4 4v5h5', 'M4 13a8 8 0 0 0 14.9 4M20 20v-5h-5'],
     copy: ['M9 9h11v11H9z', 'M5 15H4V4h11v1']
   }
   return paths[name] || paths.circle

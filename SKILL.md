@@ -16,6 +16,7 @@ whenToUse: 用户要求写小说 / 续写章节 / 整理世界观、人物、大
 - 某世界：`story-loom/projects/<id>/story.json`
 - 文风：`story-loom/style/style-guide.md` + 「文风样本」板块
 - 初稿：`story-loom/exports/drafts/`
+- 跨设备同步：面板顶部「同步」→ 导出/导入 `.storyloom.json`；同步包含完整作品数据，只走私密渠道。
 
 从工作区根目录运行：
 

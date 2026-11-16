@@ -19,6 +19,8 @@ import {
   saveProject,
   activateProject,
   listBackups,
+  exportProjectBundle,
+  importProjectBundle,
   defaultRoot,
   ConflictError,
   NotFoundError,
@@ -85,6 +87,8 @@ function usage() {
   thread <条目 id|名称>         快捷修改伏笔状态
   scan <文件|-> [--limit 30]    从正文里粗筛「值得复核的坑」，不改数据
   ingest <文件> --chapter N     把正文写进章节档案，并打印候选坑
+  sync export [--out 文件]      导出跨设备同步包（含地图/文风）
+  sync import <文件>            导入同步包
   export [--out 文件]           导出完整设定集 Markdown
   backups                      列出备份
 
@@ -326,6 +330,28 @@ async function main() {
       console.log(`rev-${backup.revision}  ${backup.at.slice(0, 19)}  ${Math.round(backup.size / 1024)} KB`)
     }
     return
+  }
+
+  if (command === 'sync') {
+    const sub = args[0]
+    if (sub === 'export') {
+      const bundle = await exportProjectBundle(root, projectId)
+      const out = values.out || path.join(root, 'exports', `${projectId}.storyloom.json`)
+      await fs.mkdir(path.dirname(out), { recursive: true })
+      await fs.writeFile(out, JSON.stringify(bundle, null, 2), 'utf8')
+      console.log(`已导出同步包：${out}`)
+      console.log(`包含 ${bundle.state.entries.length} 条档案、${bundle.media.length} 个图片文件；请私密传输。`)
+      return
+    }
+    if (sub === 'import') {
+      const file = args[1]
+      if (!file) throw new Error('用法：sync import <文件>')
+      const bundle = JSON.parse(await fs.readFile(file, 'utf8'))
+      const result = await importProjectBundle(root, bundle)
+      console.log(`已导入：${result.state.project.title}（${result.state.entries.length} 条档案）${result.imported ? ' · 新项目' : ' · 已覆盖同名项目'}`)
+      return
+    }
+    throw new Error('用法：sync export|import')
   }
 
   if (command === 'export') {

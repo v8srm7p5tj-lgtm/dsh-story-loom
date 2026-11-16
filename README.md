@@ -77,6 +77,26 @@ story-loom/              你的数据
   exports/drafts/
 ```
 
+## 跨设备同步
+
+面板顶部有一个「同步」按钮，不需要服务器、不需要账号：
+
+1. 旧设备：点「同步」→「导出」，生成一个 `.storyloom.json`。
+2. 用 AirDrop、U 盘或你自己的私有云，把文件传到另一台设备。
+3. 新设备：装好插件，打开「织世」→「同步」→「选择文件」→「导入」。
+4. 同名项目会被覆盖，本机会先自动备份；新项目会直接加入世界列表。
+
+同步包包含：当前世界的全部档案、地图/图片、文风指南。
+
+**同步包是明文，包含完整作品数据，不要发到公开群、公开仓库或公开网盘。**
+
+命令行也可以：
+
+```bash
+node dsh-story-loom/bin/storyctl.mjs sync export --out ~/Desktop/jingyue.storyloom.json
+node dsh-story-loom/bin/storyctl.mjs sync import ~/Desktop/jingyue.storyloom.json
+```
+
 ## 你平时怎么用
 
 ### 说设定
