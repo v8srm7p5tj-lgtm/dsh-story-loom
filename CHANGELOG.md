@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-11-16
+
+- 修复 Host 数据目录：从 DSH workspaceRegistry 解析工作区，不再依赖 Host 进程 cwd。
+- 桌面端不再把空档案写到 `~/.dsh/profiles/desktop/story-loom`。
+- 新增 `storyctl project`，可查看/修改当前世界基本信息。
+- README 增加隐私说明：插件不收集、不上传作品数据。
+
 ## 0.1.0 — 2026-11-16
 
 首个公开版本。
