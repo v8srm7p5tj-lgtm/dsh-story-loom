@@ -776,4 +776,10 @@ body[data-ds-dark-theme] .sl-input,body[data-ds-dark-theme] .sl-select,body[data
 .sl-sync-pending{display:flex;align-items:center;gap:6px;margin-top:8px;padding:7px 9px;border:1px dashed var(--sl-accent-line);border-radius:7px;background:var(--sl-accent-soft);font-size:10px;color:var(--sl-muted);flex-wrap:wrap}
 .sl-sync-pending .sl-btn{margin-left:auto}
 
+.sl-sync-folder{border:1px solid var(--sl-line);border-radius:10px;padding:10px 11px;background:rgba(126,110,88,.025);margin-bottom:10px}
+.sl-sync-folder .sl-settings-section{margin-bottom:0}
+.sl-sync-folder .sl-path-code{margin-top:5px}
+.sl-sync-divider{display:flex;align-items:center;gap:8px;margin:8px 0;color:var(--sl-faint);font-size:9px;letter-spacing:.08em}
+.sl-sync-divider:before,.sl-sync-divider:after{content:"";height:1px;flex:1;background:var(--sl-line-soft)}
+
 `

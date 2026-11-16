@@ -211,7 +211,22 @@ function SyncModal(props) {
   var pendingState = useState(null)
   var pending = pendingState[0]
   var setPending = pendingState[1]
+  var configState = useState(null)
+  var config = configState[0]
+  var setConfig = configState[1]
+  var folderState = useState('')
+  var folder = folderState[0]
+  var setFolder = folderState[1]
   var fileRef = useRef(null)
+
+  useEffect(function () {
+    api.syncConfig().then(function (data) {
+      setConfig(data)
+      setFolder(data.configured || data.root || '')
+    }).catch(function () {
+      setConfig({ root: '读取失败' })
+    })
+  }, [])
 
   async function doExport() {
     if (busy) return
@@ -224,6 +239,39 @@ function SyncModal(props) {
     } catch (err) {
       props.onToast({ kind: 'error', text: '导出失败：' + (err && err.message ? err.message : '未知错误') })
     } finally {
+      setBusy('')
+    }
+  }
+
+  async function switchFolder(mode) {
+    if (busy) return
+    var value = String(folder || '').trim()
+    if (!value) {
+      props.onToast({ kind: 'error', text: '先填写同步文件夹路径。' })
+      return
+    }
+    setBusy(mode)
+    try {
+      var result = await api.switchSyncFolder(value, mode)
+      props.onSwitched(result)
+      props.onClose()
+      props.onToast({ kind: 'ok', text: mode === 'copy' ? '已把当前世界复制到同步文件夹。' : '已切换到同步文件夹。' })
+    } catch (err) {
+      props.onToast({ kind: 'error', text: '切换失败：' + (err && err.message ? err.message : '未知错误') })
+      setBusy('')
+    }
+  }
+
+  async function resetFolder() {
+    if (busy) return
+    setBusy('reset')
+    try {
+      var result = await api.resetSyncFolder()
+      props.onSwitched(result)
+      props.onClose()
+      props.onToast({ kind: 'ok', text: '已恢复默认数据位置。' })
+    } catch (err) {
+      props.onToast({ kind: 'error', text: '恢复失败：' + (err && err.message ? err.message : '未知错误') })
       setBusy('')
     }
   }
@@ -265,7 +313,7 @@ function SyncModal(props) {
     Modal,
     {
       title: '同步到另一台设备',
-      subtitle: '不经过服务器：导出当前世界，传到另一台设备，再导入。',
+      subtitle: '不经过服务器：共享文件夹自动同步，或导出文件手动传。',
       width: 'narrow',
       onClose: props.onClose,
       footer: [h('div', { key: 'space', className: 'sl-spacer' }), h('button', { key: 'close', type: 'button', className: 'sl-btn', onClick: props.onClose }, '关闭')]
@@ -273,7 +321,34 @@ function SyncModal(props) {
     h(
       'div',
       null,
-      h('div', { className: 'sl-settings-note', style: { marginBottom: 12 } }, '当前世界：' + ((props.project && props.project.title) || '未命名') + ' · 修订 ' + (props.revision == null ? '?' : props.revision)),
+      h(
+        'div',
+        { className: 'sl-sync-folder' },
+        h('div', { className: 'sl-settings-section', style: { marginBottom: 10 } },
+          h('h4', null, '实时同步文件夹'),
+          h('p', null, '两台设备指向同一个 iCloud / OneDrive / Syncthing 文件夹。面板每 3 秒检查一次更新。'),
+          h('div', { className: 'sl-path-code' }, config ? config.root : '读取中…'),
+          h('input', {
+            className: 'sl-input',
+            style: { marginTop: 7 },
+            value: folder,
+            placeholder: '例如 ~/Library/Mobile Documents/com~apple~CloudDocs/织世同步',
+            onChange: function (event) { setFolder(event.target.value) }
+          }),
+          h(
+            'div',
+            { style: { display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 7 } },
+            h('button', { type: 'button', className: 'sl-btn primary small', onClick: function () { switchFolder('copy') }, disabled: !!busy }, busy === 'copy' ? '复制中…' : '复制当前世界到这里'),
+            h('button', { type: 'button', className: 'sl-btn small', onClick: function () { switchFolder('use') }, disabled: !!busy }, busy === 'use' ? '切换中…' : '使用这里已有的数据'),
+            config && config.configured
+              ? h('button', { type: 'button', className: 'sl-btn small ghost', onClick: resetFolder, disabled: !!busy }, '恢复默认位置')
+              : null
+          ),
+          h('div', { className: 'sl-settings-note', style: { marginTop: 7 } }, '第一台设备选「复制到这里」；第二台设备填同一个文件夹，选「使用已有数据」。之后两台都不要改这个位置。'),
+          h('div', { className: 'sl-settings-note', style: { marginTop: 6, color: 'var(--sl-accent)' } }, '不要在两台设备上同时改。等一台显示「已同步」后，再换另一台。')
+        )
+      ),
+      h('div', { className: 'sl-sync-divider' }, '或者：一次性传输'),
       h(
         'div',
         { className: 'sl-sync-card' },
@@ -302,8 +377,9 @@ function SyncModal(props) {
       pending
         ? h('div', { className: 'sl-sync-pending' }, h(Icon, { name: 'archive', size: 13 }), h('span', null, pending.name + ' · ' + Math.round(pending.size / 1024) + ' KB'), h('button', { type: 'button', className: 'sl-btn small primary', onClick: doImport, disabled: !!busy }, busy === 'import' ? '导入中…' : '导入这个包'))
         : null,
-      h('div', { className: 'sl-settings-note', style: { marginTop: 12 } }, '同步包是明文，包含完整作品数据。请用 AirDrop、U 盘或你自己的私有云传输，不要发到公开群/仓库。'),
-      busy ? h('div', { className: 'sl-faint', style: { fontSize: 10, marginTop: 8 } }, busy === 'export' ? '正在打包图片…' : '正在写入并备份…') : null
+      h('div', { className: 'sl-settings-note', style: { marginTop: 10 } }, '同步包是明文，包含完整作品数据。请用 AirDrop、U 盘或你自己的私有云传输，不要发到公开群/仓库。'),
+      h('div', { className: 'sl-faint', style: { fontSize: 9.5, marginTop: 6 } }, '当前世界：' + ((props.project && props.project.title) || '未命名') + ' · 修订 ' + (props.revision == null ? '?' : props.revision) + ' · 自动检查 3 秒'),
+      busy ? h('div', { className: 'sl-faint', style: { fontSize: 10, marginTop: 6 } }, '处理中…') : null
     )
   )
 }

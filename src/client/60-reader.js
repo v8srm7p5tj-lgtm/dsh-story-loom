@@ -793,7 +793,7 @@ function ReaderApp() {
         /* 网络抖动不打断阅读 */
       }
     }
-    var timer = setInterval(check, 8000)
+    var timer = setInterval(check, 3000)
     function onVisible() {
       if (document.visibilityState === 'visible') check()
     }
@@ -1008,6 +1008,7 @@ function ReaderApp() {
       revision: revision,
       onClose: function () { setSyncOpen(false) },
       onImported: handleImported,
+      onSwitched: function () { bootstrapApp() },
       onToast: showToast
     }) : null,
     h(Toast, { toast: toast })

@@ -90,6 +90,18 @@ var api = {
       body: JSON.stringify({ bundle: bundle })
     })
   },
+  syncConfig: function () {
+    return apiRequest('/sync/config')
+  },
+  switchSyncFolder: function (folder, mode) {
+    return apiRequest('/sync/folder', {
+      method: 'POST',
+      body: JSON.stringify({ folder: folder, mode: mode })
+    })
+  },
+  resetSyncFolder: function () {
+    return apiRequest('/sync/reset', { method: 'POST', body: '{}' })
+  },
   exportUrl: function (id) {
     return API_BASE + '/projects/' + encodeURIComponent(id) + '/export'
   },

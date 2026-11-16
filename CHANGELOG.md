@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0 — 2026-11-16
+
+- 新增实时同步文件夹：两台设备指向同一个 iCloud/OneDrive/Syncthing 文件夹，面板每 3 秒检查更新。
+- 同步设置保存在 `~/.dsh/story-loom-sync.json`，重启后仍生效；可一键恢复默认位置。
+- 新增「复制当前世界到这里 / 使用这里已有的数据」两种切换方式。
+- 新增 `api/sync/config`、`api/sync/folder`、`api/sync/reset`。
+
 ## 0.2.0 — 2026-11-16
 
 - 新增跨设备同步：导出/导入 `.storyloom.json`，包含当前世界、地图/图片、文风指南。
