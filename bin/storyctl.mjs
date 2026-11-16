@@ -38,6 +38,10 @@ import {
 const OPTIONS = {
   project: { type: 'string', short: 'p' },
   root: { type: 'string' },
+  title: { type: 'string' },
+  subtitle: { type: 'string' },
+  genre: { type: 'string' },
+  logline: { type: 'string' },
   chapter: { type: 'string', short: 'c' },
   json: { type: 'boolean' },
   board: { type: 'string', short: 'b' },
@@ -67,6 +71,7 @@ function usage() {
   node dsh-story-loom/bin/storyctl.mjs <命令> [参数]
 
 命令：
+  project                      查看/修改当前世界的基本信息
   path                         打印数据目录与当前项目文件
   projects                     列出所有世界
   use <项目 id>                 切换当前世界
@@ -122,6 +127,23 @@ async function main() {
   if (values.project) {
     const exists = boot.index.projects.some((item) => item.id === projectId)
     if (!exists) throw new Error(`项目不存在：${projectId}`)
+  }
+
+  if (command === 'project') {
+    const patch = {}
+    for (const key of ['title', 'subtitle', 'genre', 'logline']) {
+      if (values[key] !== undefined) patch[key] = values[key]
+    }
+    if (Object.keys(patch).length === 0) {
+      printJson({ project: state.project })
+      return
+    }
+    Object.assign(state.project, patch)
+    state.project.updatedAt = new Date().toISOString()
+    state.log.push({ at: new Date().toISOString(), action: '更新世界信息', detail: Object.keys(patch).join('、') })
+    await saveWithRetry(root, projectId, state, '更新世界信息')
+    printJson({ project: state.project })
+    return
   }
 
   if (command === 'path') {
