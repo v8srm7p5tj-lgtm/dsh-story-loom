@@ -1,0 +1,5 @@
+# dsh-story-loom —— 织世
+# Host 行：/story-loom API。左侧栏入口由 client bundle 注册。
+- insert:
+    - id: story-loom
+      name: dsh-story-loom

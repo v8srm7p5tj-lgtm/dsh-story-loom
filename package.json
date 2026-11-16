@@ -1,0 +1,71 @@
+{
+  "name": "dsh-story-loom",
+  "version": "0.1.0",
+  "description": "织世：长篇小说只读故事档案，放在 DSH 左侧栏。AI 在对话里记账，自动从正文扒伏笔、维护人物/力量/时间线/大纲/地图，并做连续性检查。",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "novel",
+    "worldbuilding",
+    "writing",
+    "story-bible"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "assets",
+    "cordis.patch.yml",
+    "icon.svg",
+    "README.md",
+    "SKILL.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ],
+      "immediately": true
+    }
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "author": "Story Loom contributors",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/v8srm7p5tj-lgtm/dsh-story-loom.git"
+  },
+  "homepage": "https://github.com/v8srm7p5tj-lgtm/dsh-story-loom#readme",
+  "bugs": {
+    "url": "https://github.com/v8srm7p5tj-lgtm/dsh-story-loom/issues"
+  }
+}

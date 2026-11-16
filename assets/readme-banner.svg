@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="380" viewBox="0 0 1200 380">
+  <defs>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8f2e6"/>
+      <stop offset="1" stop-color="#eadfca"/>
+    </linearGradient>
+    <filter id="grain">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="9" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0" result="g"/>
+      <feComponentTransfer in="g" result="f"><feFuncA type="linear" slope="0.05"/></feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="f" mode="multiply"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="380" fill="url(#paper)"/>
+  <rect width="1200" height="380" filter="url(#grain)"/>
+  <rect x="22" y="22" width="1156" height="336" fill="none" stroke="#b7a88f" stroke-width="1.5"/>
+  <rect x="30" y="30" width="1140" height="320" fill="none" stroke="#b7a88f" stroke-opacity="0.4"/>
+
+  <g transform="translate(96,92)">
+    <rect x="0" y="0" width="88" height="88" rx="18" fill="#a63d2f"/>
+    <rect x="7" y="7" width="74" height="74" rx="13" fill="none" stroke="#f8f2e6" stroke-opacity="0.55"/>
+    <text x="44" y="60" text-anchor="middle" font-family="Songti SC, STSong, Noto Serif SC, serif" font-size="48" fill="#f8f2e6">织</text>
+  </g>
+
+  <text x="220" y="128" font-family="Songti SC, STSong, Noto Serif SC, serif" font-size="62" fill="#26221d" letter-spacing="12">织 世</text>
+  <text x="224" y="166" font-family="Georgia, Times New Roman, serif" font-size="15" fill="#847966" letter-spacing="6">STORY LOOM · A READ-ONLY STORY BIBLE FOR DSH</text>
+  <text x="224" y="214" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="19" fill="#4d463c">长篇小说世界观、人物、力量、时间线、大纲、伏笔与地图。</text>
+  <text x="224" y="246" font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="19" fill="#4d463c">你负责讲，AI 负责记；正文里的坑，AI 自己扒。</text>
+
+  <g font-family="PingFang SC, Hiragino Sans GB, Microsoft YaHei, sans-serif" font-size="12" fill="#a63d2f">
+    <text x="224" y="286">只读左栏</text>
+    <text x="310" y="286">自动记账</text>
+    <text x="396" y="286">连续性检查</text>
+    <text x="500" y="286">地图 · 伏笔 · 力量阶梯</text>
+  </g>
+
+  <g transform="translate(1010,210)" stroke="#a63d2f" fill="none" opacity="0.5">
+    <circle r="58" stroke-width="1.2"/>
+    <circle r="42" stroke-width="0.8" stroke-opacity="0.6"/>
+    <path d="M0 -70 L9 -9 L70 0 L9 9 L0 70 L-9 9 L-70 0 L-9 -9 Z" fill="#f8f2e6" stroke-width="1.2"/>
+    <path d="M0 -70 L0 0 L-9 -9 Z" fill="#a63d2f" stroke="none"/>
+    <path d="M0 70 L0 0 L9 9 Z" fill="#a63d2f" stroke="none"/>
+  </g>
+</svg>
