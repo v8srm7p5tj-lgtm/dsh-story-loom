@@ -1,6 +1,6 @@
 {
   "name": "dsh-story-loom",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "织世：长篇小说只读故事档案，放在 DSH 左侧栏。AI 在对话里记账，自动从正文扒伏笔、维护人物/力量/时间线/大纲/地图，并做连续性检查。",
   "keywords": [
     "dsh",

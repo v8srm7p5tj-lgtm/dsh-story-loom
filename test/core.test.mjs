@@ -12,7 +12,7 @@ import {
   restoreBackup,
   ConflictError
 } from '../lib/store.js'
-import { buildContext, exportMarkdown, lintState, normalizeState, searchEntries } from '../lib/canon.js'
+import { buildContext, exportMarkdown, lintState, normalizeState, resolveChapter, searchEntries } from '../lib/canon.js'
 import { demoProjectState, emptyProjectState } from '../lib/schema.js'
 
 async function tempRoot() {
@@ -112,4 +112,25 @@ test('create project returns a clean empty state', async () => {
   const created = await createProject(root, { title: '第二个世界' })
   assert.equal(created.project.title, '第二个世界')
   assert.equal(created.entries.length, 2)
+})
+
+
+test('chapter number resolves to its own outline node, not the volume with the same number', () => {
+  const state = {
+    boards: [
+      { id: 'chapters', name: '章节档案', fields: [] },
+      { id: 'outline', name: '主线大纲', fields: [] }
+    ],
+    entries: [
+      { id: 'v1', boardId: 'outline', name: '卷一 · 没有牌的人', fields: { level: '卷', number: 1, order: 1 } },
+      { id: 'o1', boardId: 'outline', name: '第一章 · 荒野', fields: { level: '章', number: '1-01', order: 101 } },
+      { id: 'c1', boardId: 'chapters', name: '荒野', fields: { number: 1, outlineRef: 'o1' } }
+    ],
+    project: { title: '测试' },
+    settings: {},
+    log: []
+  }
+  const resolved = resolveChapter(state, '1')
+  assert.equal(resolved.chapter.id, 'c1')
+  assert.equal(resolved.outline.id, 'o1')
 })
