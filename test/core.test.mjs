@@ -134,3 +134,23 @@ test('chapter number resolves to its own outline node, not the volume with the s
   assert.equal(resolved.chapter.id, 'c1')
   assert.equal(resolved.outline.id, 'o1')
 })
+
+
+test('chapter number never falls back to a volume when no chapter record exists', () => {
+  const state = {
+    boards: [
+      { id: 'chapters', name: '章节档案', fields: [] },
+      { id: 'outline', name: '主线大纲', fields: [] }
+    ],
+    entries: [
+      { id: 'v2', boardId: 'outline', name: '卷二 · 灯座里的石头', fields: { level: '卷', number: 2, order: 2 } },
+      { id: 'o2', boardId: 'outline', name: '灯下', fields: { level: '章', number: '2-01', order: 102 } }
+    ],
+    project: { title: '测试' },
+    settings: {},
+    log: []
+  }
+  const resolved = resolveChapter(state, '2')
+  assert.equal(resolved.chapter, null)
+  assert.equal(resolved.outline.id, 'o2')
+})
